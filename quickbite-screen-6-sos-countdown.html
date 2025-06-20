@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBite: Alerta SOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #4A3F4F; color: #F8F4E3; margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; }
+        .bg-dark-brown { background-color: #4A3F4F; }
+        .text-cream { color: #F8F4E3; }
+        .text-orange { color: #FF8C42; }
+        .text-red { color: #EF4444; /* Tailwind red-500 */ }
+        #countdown-timer { font-size: 8rem; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-dark-brown p-4">
+    <div class="text-center">
+        <h1 class="text-5xl font-bold text-red mb-8">¡ALERTA DE EMERGENCIA!</h1>
+        <p class="text-xl text-cream mb-6">La alerta se enviará en:</p>
+        <div id="countdown-timer" class="text-orange mb-8"></div>
+        <p class="text-lg text-cream mb-10">Pulsa CANCELAR para detener el envío.</p>
+        
+        <button id="cancel-button" onclick="cancelSOS();" class="bg-gray-400 text-dark-brown py-4 px-12 rounded-full font-bold text-2xl hover:bg-gray-500 transition-all duration-300 shadow-lg">
+            CANCELAR
+        </button>
+    </div>
+
+    <script>
+        let countdown = 5; // Start from 5 seconds
+        const timerDisplay = document.getElementById('countdown-timer');
+        let countdownInterval;
+
+        function updateCountdown() {
+            timerDisplay.textContent = countdown;
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                sendSOS();
+            }
+            countdown--;
+        }
+
+        function sendSOS() {
+            alert('¡Alerta de emergencia enviada! Se ha notificado a tus contactos y autoridades.');
+            // Aquí iría la lógica real para enviar la alerta
+            // Por ahora, redirigimos a la pantalla principal
+            window.location.assign('quickbite-screen-3-main-app.html'); 
+        }
+
+        function cancelSOS() {
+            clearInterval(countdownInterval);
+            alert('Alerta cancelada. No se ha enviado ninguna notificación.');
+            window.location.assign('quickbite-screen-3-main-app.html'); 
+        }
+
+        // Initialize countdown
+        updateCountdown(); // Call once immediately to show initial 5
+        countdownInterval = setInterval(updateCountdown, 1000); // Update every second
+    </script>
+</body>
+</html>

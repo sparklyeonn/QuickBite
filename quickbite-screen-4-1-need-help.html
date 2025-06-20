@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBite: ¿Necesitas Ayuda?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F4E3; color: #4A3F4F; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        .bg-cream { background-color: #F8F4E3; }
+        .bg-orange { background-color: #FF8C42; }
+        .text-orange { color: #FF8C42; }
+        .text-brown { color: #4A3F4F; }
+    </style>
+</head>
+<body class="bg-cream p-6">
+    <div class="w-full max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+        <h2 class="text-3xl font-bold text-center text-brown mb-6">¿Necesitas Ayuda?</h2>
+        
+        <p class="text-brown mb-6 text-center">Si te sientes en riesgo o necesitas apoyo, aquí hay algunas opciones:</p>
+
+        <div class="flex flex-col space-y-4">
+            <a href="tel:+56912345678" class="bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 transition-all duration-300 flex items-center justify-center space-x-2">
+                <span>&#128222;</span> <span>Llamar a Contacto de Confianza (Ejemplo)</span>
+            </a>
+            <a href="https://www.policia.cl/" target="_blank" class="bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-all duration-300 flex items-center justify-center space-x-2">
+                <span>&#x1F5FA;&#xFE0F;</span> <span>Contactar a Carabineros de Chile</span>
+            </a>
+            <a href="https://www.sernam.cl/violencia-contra-la-mujer/donde-pedir-ayuda/" target="_blank" class="bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition-all duration-300 flex items-center justify-center space-x-2">
+                <span>&#x1F46D;</span> <span>Líneas de Ayuda y Recursos (SERNAMEG)</span>
+            </a>
+            <button onclick="alert('Se ha enviado una alerta a tus contactos de emergencia predefinidos.');" class="bg-orange text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all duration-300 flex items-center justify-center space-x-2">
+                <span>&#x1F6A8;</span> <span>Enviar Alerta Rápida</span>
+            </button>
+        </div>
+
+        <div class="mt-8 text-center">
+            <button type="button" onclick="window.location.href='quickbite-screen-4-profile.html';" class="bg-gray-200 text-brown py-3 px-6 rounded-lg font-bold hover:bg-gray-300 transition-all duration-300">
+                Volver a Perfil
+            </button>
+        </div>
+    </div>
+</body>
+</html>
