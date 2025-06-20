@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBite: Hacer Pedido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F4E3; color: #4A3F4F; margin: 0; display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 4rem; }
+        .bg-cream { background-color: #F8F4E3; }
+        .bg-orange { background-color: #FF8C42; }
+        .text-orange { color: #FF8C42; }
+        .text-brown { color: #4A3F4F; }
+        input[type="text"], input[type="number"], textarea { border: 1px solid #D1D1D1; padding: 0.75rem; border-radius: 0.5rem; background-color: #FFFFFF; color: #4A3F4F; }
+    </style>
+</head>
+<body class="bg-cream p-6">
+    <div class="w-full max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+        <h2 class="text-3xl font-bold text-center text-brown mb-6">Realizar Pedido</h2>
+        
+        <p class="text-brown mb-6 text-center">Elige tus productos y finaliza tu pedido de forma sencilla.</p>
+
+        <form class="flex flex-col space-y-4">
+            <div>
+                <label for="restaurant" class="block text-sm font-medium text-gray-700 mb-1">Restaurante:</label>
+                <select id="restaurant" class="w-full p-2 border border-gray-300 rounded-lg bg-white text-brown">
+                    <option value="">Selecciona un restaurante</option>
+                    <option value="burgerTown">BurgerTown</option>
+                    <option value="pizzeriaFantastica">Pizzeria Fantástica</option>
+                    <option value="sazonAbuela">El Sazón de la Abuela</option>
+                </select>
+            </div>
+            <div>
+                <label for="foodItem" class="block text-sm font-medium text-gray-700 mb-1">Artículo:</label>
+                <input type="text" id="foodItem" placeholder="Ej: Hamburguesa Clásica" class="w-full" />
+            </div>
+            <div>
+                <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Cantidad:</label>
+                <input type="number" id="quantity" value="1" min="1" class="w-full" />
+            </div>
+            <div>
+                <label for="deliveryAddress" class="block text-sm font-medium text-gray-700 mb-1">Dirección de entrega:</label>
+                <input type="text" id="deliveryAddress" placeholder="Tu dirección" class="w-full" />
+            </div>
+            <div>
+                <label for="deliveryNotes" class="block text-sm font-medium text-gray-700 mb-1">Notas al repartidor (opcional):</label>
+                <textarea id="deliveryNotes" rows="2" placeholder="Ej: Tocar el timbre suave." class="w-full"></textarea>
+            </div>
+            <button type="button" onclick="window.location.href='quickbite-screen-5-order-tracking.html';" class="bg-orange text-white py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all duration-300">
+                Confirmar Pedido
+            </button>
+        </form>
+
+        <div class="mt-8 text-center">
+            <button type="button" onclick="window.location.href='quickbite-screen-3-main-app.html';" class="bg-gray-200 text-brown py-3 px-6 rounded-lg font-bold hover:bg-gray-300 transition-all duration-300">
+                Volver a Inicio
+            </button>
+        </div>
+    </div>
+</body>
+</html>

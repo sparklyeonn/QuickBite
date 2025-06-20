@@ -30,7 +30,7 @@
     </div>
 
     <script>
-        let countdown = 5; // Start from 5 seconds
+        let countdown = 10; // Inicia de 10 segundos, inspirada en Life360
         const timerDisplay = document.getElementById('countdown-timer');
         let countdownInterval;
 
@@ -45,14 +45,16 @@
 
         function sendSOS() {
             alert('¡Alerta de emergencia enviada! Se ha notificado a tus contactos y autoridades.');
-            // Aquí iría la lógica real para enviar la alerta
-            // Por ahora, redirigimos a la pantalla principal
+            localStorage.removeItem('isSpecialOrderActive'); // Limpiar el flag de pedido especial
+            localStorage.removeItem('specialOrderDetails'); // Limpiar detalles del pedido especial
             window.location.assign('quickbite-screen-3-main-app.html'); 
         }
 
         function cancelSOS() {
             clearInterval(countdownInterval);
             alert('Alerta cancelada. No se ha enviado ninguna notificación.');
+            localStorage.removeItem('isSpecialOrderActive'); // Limpiar el flag de pedido especial
+            localStorage.removeItem('specialOrderDetails'); // Limpiar detalles del pedido especial
             window.location.assign('quickbite-screen-3-main-app.html'); 
         }
 

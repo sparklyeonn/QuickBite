@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #F8F4E3; color: #4A3F4F; margin: 0; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; min-height: 100vh; padding-bottom: 4rem; }
         .bg-cream { background-color: #F8F4E3; }
@@ -50,41 +54,45 @@
             font-size: 1.5rem;
             margin-bottom: 0.25rem;
         }
+        /* Important: Ensure the map container has a height for Leaflet to render */
+        #map { width: 100%; height: 100%; border-radius: 0.5rem; }
     </style>
 </head>
 <body class="bg-cream">
     <div class="w-full max-w-xl mx-auto p-4 pt-6">
-        <h2 class="text-2xl font-bold text-brown mb-4 text-center">Tu Pedido QuickBite</h2>
-        <p class="text-gray-700 mb-6 text-center">Simulando la llegada de tu delivery para tu discreción.</p>
+        <h2 class="text-2xl font-bold text-brown mb-4 text-center" id="pageTitle">Tus Pedidos QuickBite</h2>
+        <p class="text-gray-700 mb-6 text-center" id="orderStatusMessage">Cargando estado del pedido...</p>
         
-        <div class="w-full max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-2xl border border-gray-200">
+        <div id="activeOrderSection" class="w-full max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-2xl border border-gray-200 hidden">
             <div class="w-full">
                 <div class="bg-gray-100 rounded-t-lg p-3 flex items-center justify-between">
                      <div class="flex items-center gap-2">
                         <span class="w-8 h-8 bg-orange rounded-full flex items-center justify-center text-white font-bold text-lg">Q</span>
-                        <h3 class="font-bold text-lg text-brown">Tu Pedido QuickBite</h3>
+                        <h3 class="font-bold text-lg text-brown">Tu Pedido Actual</h3>
                     </div>
                     <span class="text-gray-400 text-2xl">&#8942;</span>
                 </div>
                 <div class="p-4">
-                    <div class="w-full h-40 bg-gray-200 rounded-lg flex items-center justify-center mb-4">
-                        <p class="text-gray-500">Simulación de Mapa</p>
+                    <!-- Contenedor del mapa -->
+                    <div id="map-container" class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center mb-4 text-gray-500 text-sm">
+                        Cargando mapa...
                     </div>
+                    
                     <div class="text-sm">
-                        <p class="font-bold text-brown">Combo Hamburguesa Clásica</p>
-                        <p class="text-gray-600">de BurgerTown</p>
-                        <p class="text-gray-500 mt-1">Pedido #QB-123456</p>
+                        <p class="font-bold text-brown text-lg" id="activeOrderItem">Cargando item...</p>
+                        <p class="text-gray-600" id="activeOrderRestaurant">Cargando restaurante...</p>
+                        <p class="text-gray-500 mt-1 text-base" id="activeOrderEta">ETA: ...</p>
                     </div>
                     <div class="mt-4">
                         <p class="font-semibold text-brown mb-2">Estado del pedido</p>
                         <div class="w-full bg-gray-200 rounded-full h-2.5">
                             <div class="bg-green h-2.5 rounded-full" style="width: 65%"></div>
                         </div>
-                        <p class="text-center mt-2 text-green font-bold">Tu repartidor está en camino</p>
+                        <p class="text-center mt-2 text-green font-bold text-lg">Tu repartidor está en camino</p>
                     </div>
                     <div class="mt-6 flex items-center justify-between bg-cream p-3 rounded-lg">
                         <div>
-                            <p class="font-bold text-brown">Juan P.</p>
+                            <p class="font-bold text-brown text-lg" id="deliveryPersonName">Cargando repartidor...</p>
                             <p class="text-sm text-gray-600">Tu repartidor</p>
                         </div>
                         <button id="sosButton" class="bg-orange text-white px-6 py-3 rounded-lg font-bold shadow-md hover:bg-opacity-90 transform hover:scale-105 transition-all duration-300 glow">
@@ -94,19 +102,106 @@
                 </div>
             </div>
         </div>
-        <div id="alertMessage" class="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center font-semibold hidden max-w-sm mx-auto">
-            ¡ALERTA SOS ACTIVADA!
+
+        <div id="orderHistorySection" class="w-full max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-2xl border border-gray-200">
+            <h3 class="text-xl font-bold text-brown mb-4">Historial de Pedidos</h3>
+            <ul id="orderHistoryList" class="space-y-3">
+                <!-- Los pedidos del historial se cargarán aquí -->
+            </ul>
+            <p id="noOrdersMessage" class="text-gray-600 text-center mt-4 hidden">No tienes pedidos anteriores.</p>
         </div>
+
         <a href="quickbite-screen-3-main-app.html" class="mt-8 bg-gray-200 text-brown py-3 px-6 rounded-lg font-bold hover:bg-gray-300 transition-all duration-300 inline-block text-center">
             Volver a Principal
         </a>
     </div>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
     <script>
         const sosButton = document.getElementById('sosButton');
-        let pressTimer;
+        const activeOrderSection = document.getElementById('activeOrderSection');
+        const orderHistorySection = document.getElementById('orderHistorySection');
+        const orderHistoryList = document.getElementById('orderHistoryList');
+        const noOrdersMessage = document.getElementById('noOrdersMessage');
+        const orderStatusMessage = document.getElementById('orderStatusMessage');
+        const pageTitle = document.getElementById('pageTitle'); // Nuevo: título de la página
 
+        // Función para cargar el historial de pedidos simulado
+        function loadOrderHistory() {
+            const orders = [
+                { id: 'QB-123456', item: 'Combo Hamburguesa Clásica', restaurant: 'BurgerTown', date: '2025-06-18', status: 'Entregado' },
+                { id: 'QB-987654', item: 'Pizza Pepperoni Grande', restaurant: 'Pizzeria Fantástica', date: '2025-06-15', status: 'Entregado' },
+                { id: 'QB-654321', item: 'Sushi Mix Familiar', restaurant: 'Sushi Express', date: '2025-06-12', status: 'Entregado' },
+            ];
+
+            if (orders.length === 0) {
+                noOrdersMessage.classList.remove('hidden');
+            } else {
+                noOrdersMessage.classList.add('hidden');
+                orderHistoryList.innerHTML = ''; // Limpiar lista existente
+                orders.forEach(order => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'bg-gray-50 p-3 rounded-lg shadow-sm flex justify-between items-center';
+                    listItem.innerHTML = `
+                        <div>
+                            <p class="font-semibold text-brown">Pedido #${order.id}</p>
+                            <p class="text-sm text-gray-700">${order.item} de ${order.restaurant}</p>
+                            <p class="text-xs text-gray-500">${order.date}</p>
+                        </div>
+                        <span class="text-sm font-bold text-green-700">${order.status}</span>
+                    `;
+                    orderHistoryList.appendChild(listItem);
+                });
+            }
+        }
+
+        // Lógica del mapa con Leaflet
+        let mapInstance = null; // Variable para almacenar la instancia del mapa
+
+        function initMap() {
+            const mapContainer = document.getElementById('map-container');
+            if (!mapContainer) {
+                console.error("Map container not found.");
+                return;
+            }
+
+            // Si ya hay una instancia de mapa, la destruimos para evitar errores al reinicializar
+            if (mapInstance) {
+                mapInstance.remove();
+                mapInstance = null;
+            }
+
+            // Asegurarse de que el div 'map' esté presente para Leaflet
+            mapContainer.innerHTML = '<div id="map" class="w-full h-full rounded-lg"></div>';
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    mapInstance = L.map('map').setView([lat, lon], 15);
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }).addTo(mapInstance);
+
+                    L.marker([lat, lon]).addTo(mapInstance)
+                        .bindPopup('Estás aquí')
+                        .openPopup();
+                }, (error) => {
+                    console.error("Error al obtener ubicación: ", error);
+                    mapContainer.innerHTML = `<p class="text-red-500 text-center p-4">No se pudo cargar el mapa. Activa la ubicación o revisa los permisos.</p>`;
+                }, { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 });
+            } else {
+                mapContainer.innerHTML = `<p class="text-red-500 text-center p-4">Tu navegador no soporta la geolocalización.</p>`;
+            }
+        }
+
+        // Lógica para el botón SOS (sin cambios)
         if (sosButton) {
+            let pressTimer;
             sosButton.addEventListener('mousedown', () => {
                 pressTimer = window.setTimeout(() => {
                     window.location.href = 'quickbite-screen-6-sos-countdown.html';
@@ -132,6 +227,35 @@
                 clearTimeout(pressTimer);
             });
         }
+
+        // Lógica principal al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            const isSpecialOrderActive = localStorage.getItem('isSpecialOrderActive');
+            const specialOrderDetails = JSON.parse(localStorage.getItem('specialOrderDetails'));
+
+            if (isSpecialOrderActive === 'true' && specialOrderDetails) {
+                // Mostrar sección de pedido activo
+                activeOrderSection.classList.remove('hidden');
+                orderHistorySection.classList.add('hidden'); // Ocultar historial
+                pageTitle.textContent = 'Pedido Actual'; // Cambia el título de la página
+                orderStatusMessage.textContent = `¡Tu pedido especial de ${specialOrderDetails.item} está en camino!`;
+
+                // Rellenar detalles del pedido especial
+                document.getElementById('activeOrderItem').textContent = specialOrderDetails.item;
+                document.getElementById('activeOrderRestaurant').textContent = `de ${specialOrderDetails.restaurant}`;
+                document.getElementById('activeOrderEta').textContent = `Llegará en: ${specialOrderDetails.eta}`; // Más descriptivo
+                document.getElementById('deliveryPersonName').textContent = specialOrderDetails.deliveryPerson;
+
+                initMap(); // Inicializar el mapa para el pedido activo
+            } else {
+                // Mostrar sección de historial de pedidos
+                activeOrderSection.classList.add('hidden');
+                orderHistorySection.classList.remove('hidden');
+                pageTitle.textContent = 'Tus Pedidos QuickBite'; // Restaura el título
+                orderStatusMessage.textContent = 'Aquí puedes ver tus pedidos anteriores.';
+                loadOrderHistory(); // Cargar el historial de pedidos
+            }
+        });
     </script>
 
     <!-- Fixed Bottom Navigation Bar -->
